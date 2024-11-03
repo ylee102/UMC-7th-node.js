@@ -1,6 +1,7 @@
 // src/repositories/review.repository.js
 // 리뷰 관련 데이터베이스 접근 로직
 
+<<<<<<< HEAD
 import { prisma } from '../db.config.js'; // Prisma 클라이언트 설정 파일 로드
 
 // 리뷰를 데이터베이스로부터 가져오는 함수
@@ -56,5 +57,32 @@ export const createReview = async (storeId, reviewData) => {
         return newReview; // 생성된 리뷰 레코드 반환
     } catch (error) {
         throw new Error('리뷰 생성 오류: ' + error.message); // 오류 발생 시 에러 메시지 출력
+=======
+import pool from '../db.config.js'; // 데이터베이스 연결 설정 파일 로드
+
+// 새로운 리뷰를 데이터베이스에 추가하는 함수
+export const createReview = async (storeId, reviewData) => {
+    const { score, comment, memberId } = reviewData; // Use 'score' instead of 'rating'
+
+    // 리뷰를 삽입하는 SQL 쿼리
+    const query = `
+        INSERT INTO review (score, body, member_id, store_id)
+        VALUES (?, ?, ?, ?);
+    `;
+
+    const values = [score, comment, memberId, storeId]; // Use 'score' in the values array
+
+    try {
+        const result = await pool.query(query, values);
+
+        // 삽입된 리뷰의 ID를 기반으로 해당 리뷰를 다시 조회
+        const reviewId = result[0].insertId;
+        const selectQuery = `SELECT * FROM review WHERE id = ?`;
+        const [reviewResult] = await pool.query(selectQuery, [reviewId]);
+
+        return reviewResult[0]; // 생성된 리뷰 레코드 반환
+    } catch (error) {
+        throw new Error('Error creating review: ' + error.message);
+>>>>>>> aded25e (가게에 리뷰추가하기 api)
     }
 };
