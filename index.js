@@ -3,6 +3,7 @@ import express from "express";
 import cors from 'cors';
 import { handleUserSignUp } from "./src/controllers/user.controller.js";
 import {handleAddStore} from './src/controllers/store.controller.js';
+import { handleAddReview } from "./src/controllers/review.controller.js";
 
 //index.js
 //메인 애플리케이션 실행 파일. 
@@ -27,7 +28,7 @@ app.post("/api/v1/users/signup", handleUserSignUp);
 
 app.post('/api/v1/region/:regionId/store', handleAddStore);
 
-
+app.post('/api/v1/store/:storeId/review', handleAddReview)
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
