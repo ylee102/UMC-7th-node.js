@@ -38,6 +38,8 @@ model Mission {
   // Many-to-many relation with User
   users UserMission[]
 
+  stores Store[] @relation("StoreMissions")
+  
   @@map("mission")
 }
 
@@ -90,6 +92,7 @@ model Store {
   region     Region   @relation(fields: [region_id], references: [id])
   reviews    Review[] // Many-to-many relationship with User through Review
 
+  missions Mission[] @relation("StoreMissions")
   @@map("store")
 }
 
