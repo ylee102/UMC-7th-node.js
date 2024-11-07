@@ -5,7 +5,9 @@ import { prisma } from '../db.config.js'; // Prisma 클라이언트 설정 파�
 
 // 리뷰를 데이터베이스로부터 가져오는 함수
 //유저 id에 해당하는 리뷰 반환
+
 export const retrieveUserReviewsInRepository = async (userId) => {
+    userId = parseInt(userId, 10) 
     const reviews = await prisma.review.findMany({
       where: {
         userId: userId, // Filters reviews by the given userId

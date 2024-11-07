@@ -26,11 +26,11 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-// app.post("/api/v1/users/signup", handleUserSignUp);
+app.post("/api/v1/users/signup", handleUserSignUp);
 
-// app.post('/api/v1/region/:regionId/store', handleAddStore);
+app.post('/api/v1/region/:regionId/store', handleAddStore);
 
-// app.post('/api/v1/store/:storeId/review', handleAddReview)
+app.post('/api/v1/store/:storeId/review', handleAddReview)
 
 // app.post('/api/v1/store/:storeId/mission/:missionId/user/:userId/start', startMission);
 // 목록 조회 - 닉네임, 작성시간, 별점, 텍스트 

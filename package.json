@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.js",
-    "dev": "nodemon -e js,json,prisma --exec \"prisma generate && node src/index.js"
+    "start": "node index.js",
+    "dev": "nodemon -e js,json,prisma --exec \"prisma generate && node index.js"
   },
   "author": "Young Seok Max Lee <ylee102@gmail.com>",
   "license": "ISC",

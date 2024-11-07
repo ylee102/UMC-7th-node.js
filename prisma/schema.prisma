@@ -109,6 +109,7 @@ model Review {
   score     Float
   storeId   Int
   userId    Int
+  created_at DateTime @default(now())
 
   // Foreign Key Relationships
   store     Store  @relation(fields: [storeId], references: [id], onDelete: Restrict, onUpdate: Cascade)

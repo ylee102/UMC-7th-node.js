@@ -3,9 +3,25 @@
 
 import { createReview } from '../repositories/review.repository.js';
 import { findStoreById } from '../repositories/store.repository.js';
+import { retrieveUserReviewsInRepository } from '../repositories/review.repository.js';
 
 export const retrieveUserReviews = async(userId) => {
-    return await retriveUserReviewsInRepository(userId);
+    try {
+        if (!userId) {
+          throw new Error("User ID is required");
+        }
+    
+        const reviews = await retrieveUserReviewsInRepository(userId);
+    
+        if (!reviews) {
+          throw new Error("No reviews found for this user");
+        }
+    
+        return reviews;
+      } catch (error) {
+        console.error("Error retrieving user reviews:", error.message);
+        throw new Error("Failed to retrieve user reviews. Please try again later.");
+      }
   }
 // 특정 가게에 리뷰를 추가하는 서비스 함수
 const addReview = async (storeId, reviewData) => {
