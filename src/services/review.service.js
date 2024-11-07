@@ -4,6 +4,9 @@
 import { createReview } from '../repositories/review.repository.js';
 import { findStoreById } from '../repositories/store.repository.js';
 
+export const retrieveUserReviews = async(userId) => {
+    return await retriveUserReviewsInRepository(userId);
+  }
 // 특정 가게에 리뷰를 추가하는 서비스 함수
 const addReview = async (storeId, reviewData) => {
     // 가게가 존재하는지 확인

@@ -1,7 +1,8 @@
 import {prisma} from "../db.config.js";
 
+
 // 사용자 찾기 또는 없으면 새 사용자 생성
-export const findOrCreateUser = async (userData) => {
+export const findOrCreateUserInRepository = async (userData) => {
   const { email, name } = userData;
 
   // 이메일로 사용자 찾기

@@ -3,6 +3,33 @@
 
 import { prisma } from '../db.config.js'; // Prisma 클라이언트 설정 파일 로드
 
+// 리뷰를 데이터베이스로부터 가져오는 함수
+//유저 id에 해당하는 리뷰 반환
+export const retrieveUserReviewsInRepository = async (userId) => {
+    const reviews = await prisma.review.findMany({
+      where: {
+        userId: userId, // Filters reviews by the given userId
+      },
+      select: {
+        id: true,
+        content: true,
+        score: true,
+        created_at: true,  // Assuming `created_at` is a timestamp for when the review was created
+        store: {
+          select: {
+            id: true,
+            name: true,  // Include the store name for each review
+          },
+        },
+      },
+      orderBy: {
+        created_at: 'desc', // Orders by creation date in descending order (most recent first)
+      },
+    });
+  
+    return reviews;
+  };
+
 // 새로운 리뷰를 데이터베이스에 추가하는 함수
 export const createReview = async (storeId, reviewData) => {
     const { score, comment, userId } = reviewData;

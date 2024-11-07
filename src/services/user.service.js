@@ -1,10 +1,17 @@
 import { responseFromUser } from "../dtos/user.dto.js";
+import { retrieveUserReviewsInRepository } from "../repositories/review.repository.js";
 import {
   addUser,
   getUser,
   getUserPreferencesByUserId,
   setPreference,
+  findOrCreateUserInRepository
 } from "../repositories/user.repository.js";
+
+export const findOrCreateUser = async (userData) => {
+  return await findOrCreateUserInRepository(userData);
+};
+
 
 //보내준 데이터 이용해서 실제 로직을 구현하는 것. 
 
