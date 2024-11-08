@@ -16,17 +16,6 @@ export const findStoreById = async (storeId) => {
     }
 };
 
-// ID로 가게를 찾는 함수
-export const findStoreById = async (storeId) => {
-    const query = `SELECT * FROM store WHERE id = ?`;
-
-    try {
-        const [result] = await pool.query(query, [storeId]);
-        return result[0] || null; // 가게가 존재하면 레코드 반환, 없으면 null 반환
-    } catch (error) {
-        throw new Error('Error finding store: ' + error.message);
-    }
-};
 // 새로운 가게를 생성하고 특정 지역과 연관시키는 함수
 export const createStore = async (regionId, storeData) => {
     const { name, address, score } = storeData;
