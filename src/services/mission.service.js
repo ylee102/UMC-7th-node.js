@@ -1,28 +1,56 @@
-// src/services/mission.service.js
-// 미션 관련 비즈니스 로직 처리
-
-import { checkMissionInProgress, createUserMission } from '../repositories/mission.repository.js';
-import { findMissionById } from '../repositories/mission.repository.js';
-
-// 특정 사용자가 특정 가게의 미션을 시작하는 서비스 함수
-const startMission = async (storeId, missionId, userId) => {
-    // 미션이 존재하는지 확인
-    const mission = await findMissionById(missionId);
-    if (!mission) {
-        throw new Error('Mission not found');
+import {
+    responseFromMemberMission,
+    responseFromMemberMissionList,
+    responseFromMission,
+  } from "../dtos/mission.dto.js";
+  import {
+    addMemberMission,
+    addMission,
+    getMemberMissionById,
+    getMission,
+    getMemberMissionListByMemberId,
+    getMemberMissionListByStatus,
+    getMemberMissionByMemberIdAndMissionId,
+  } from "../repositories/mission.repository.js";
+  
+  export const createMission = async (storeId, data) => {
+    const missionId = await addMission({
+      storeId: storeId,
+      money: data.money,
+      score: data.score,
+    });
+    const mission = await getMission(missionId);
+  
+    return responseFromMission(mission);
+  };
+  
+  export const createMemberMission = async (missionId, memberId) => {
+    const memberMissionId = await getMemberMissionByMemberIdAndMissionId(
+      memberId,
+      missionId
+    );
+    if (memberMissionId) {
+      throw new Error("이미 도전 중인 미션입니다.");
     }
-
-    // 해당 사용자가 이미 미션을 도전 중인지 확인
-    const missionInProgress = await checkMissionInProgress(userId, missionId);
-    if (missionInProgress) {
-        throw new Error('Mission already in progress');
-    }
-
-    // 사용자의 미션 도전 상태를 저장
-    const newUserMission = await createUserMission(userId, missionId, storeId);
-    return newUserMission;
-};
-
-export const missionService = {
-    startMission,
-};
+  
+    const newMemberMissionId = await addMemberMission(missionId, memberId);
+    const memberMission = await getMemberMissionById(newMemberMissionId);
+  
+    return responseFromMemberMission(memberMission);
+  };
+  
+  export const readMemberMissionList = async (memberId) => {
+    const memberMissionList = await getMemberMissionListByMemberId(memberId);
+  
+    return responseFromMemberMissionList(memberMissionList);
+  };
+  
+  export const readMemberMissionListByStatus = async (memberId, status) => {
+    const memberMissionList = await getMemberMissionListByStatus(
+      memberId,
+      status
+    );
+  
+    return responseFromMemberMissionList(memberMissionList);
+  };
+  

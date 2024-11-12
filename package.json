@@ -6,10 +6,10 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "dev": "nodemon -e js,json,prisma --exec \"prisma generate && node index.js"
+    "start": "node src/index.js",
+    "dev": "nodemon -e js,json,prisma --exec \"prisma generate && node src/index.js"
   },
-  "author": "",
+  "author": "Young Seok Lee <ylee102@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",

@@ -1,45 +1,81 @@
-// src/controllers/review.controller.js
-import { reviewService } from '../services/review.service.js';
-import { findOrCreateUser } from '../services/user.service.js';
-import {retrieveUserReviews} from '../services/review.service.js';
+import { StatusCodes } from "http-status-codes";
+import { bodyToReview } from "../dtos/review.dto.js";
+import {
+  createReview,
+  readStoreReviewList,
+} from "../services/review.service.js";
 
-//유저가 쓴 리뷰를 가져오는 함수
-export const handleListUserReviews = async (req, res) => {
-    try {
-        const {userId} = req.params;
-
-        const reviews = await retrieveUserReviews(userId);
-
-        if (!reviews || reviews.length === 0) {
-            return res.status(404).json({ message: "해당 유저의 리뷰가 없습니다" });
+/**
+ * 가게 리뷰 리스트 조회하기
+ * @param {*} req
+ * @param {{
+    "data": [
+        {
+            "id": 1,
+            "content": "리뷰1",
+            "store": {
+                "id": 1,
+                "address": "서울특별시",
+                "name": "가게1",
+                "score": 4.5,
+                "regionId": 2
+            },
+            "member": {
+                "id": 1,
+                "email": "email@test.com10",
+                "name": "신주은",
+                "nickname": "사야",
+                "gender": "MALE",
+                "inactiveDate": "2003-01-12T00:00:00.000Z",
+                "phone": "01044445555",
+                "photoLink": ""
+            }
         }
-
-        res.status(200).json(reviews);
+    ],
+    "pagination": {
+        "cursor": 5
     }
-    catch (error) {
-        res.status(500).json({message: error.message});
+}} res
+ * @param {*} next
+ */
+export const handleStoreReviewListRead = async (req, res, next) => {
+  try {
+    const reviews = await readStoreReviewList(
+      parseInt(req.params.storeId),
+      typeof req.query.cursor === "string" ? parseInt(req.query.cursor) : 0
+    );
+
+    res.status(StatusCodes.OK).json(reviews);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * 리뷰 추가하기
+ * @param {{
+    "memberId": 1,
+    "star": 8.9,
+    "content": "맛집짱이에요"
+}} req
+ * @param {{
+    "result": {
+        "id": 12,
+        "star": 8.9,
+        "content": "맛집짱이에요"
     }
-}
+}} res
+ * @param {*} next
+ */
+export const handleReviewCreate = async (req, res, next) => {
+  try {
+    const review = await createReview(
+      parseInt(req.params.storeId),
+      bodyToReview(req.body)
+    );
 
-// 특정 가게에 리뷰를 추가하는 컨트롤러 함수
-export const handleAddReview = async (req, res) => {
-    try {
-        const { storeId } = req.params;
-        const { score, comment, email, name} = req.body;
-
-        // 사용자를 찾거나 없으면 새로 생성
-        const member = await findOrCreateUser({ email, name});
-
-        // member_id와 함께 리뷰 추가
-        const reviewData = {
-            score,
-            comment,
-            memberId: member.id
-        };
-        const newReview = await reviewService.addReview(storeId, reviewData);
-
-        res.status(201).json(newReview);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    res.status(StatusCodes.CREATED).json({ result: review });
+  } catch (error) {
+    next(error);
+  }
 };

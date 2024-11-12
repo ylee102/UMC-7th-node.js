@@ -1,8 +1,15 @@
-export const responseFromReviews = (reviews) => {
+export const bodyToStore = (body, region) => {
     return {
-        data: reviews,
-        pagination: {
-            cursor: reviews.length ? reviews[reviews.length -1].id:null
-        },
+      region: region,
+      name: body.name,
+      address: body.address,
     };
-};
+  };
+  
+  export const responseFromStore = (store) => {
+    return {
+      id: store.id,
+      name: store.name,
+    };
+  };
+  

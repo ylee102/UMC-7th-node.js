@@ -1,25 +1,91 @@
-// src/controllers/mission.controller.js
-// 미션 관련 요청을 처리하는 컨트롤러
+import { StatusCodes } from "http-status-codes";
+import { bodyToMission } from "../dtos/mission.dto.js";
+import {
+  createMemberMission,
+  createMission,
+  readMemberMissionListByStatus,
+  readMemberMissionList,
+} from "../services/mission.service.js";
 
-import { missionService } from '../services/mission.service.js';
-
-// 특정 사용자가 특정 가게의 미션을 시작하는 컨트롤러 함수
-export const startMission = async (req, res) => {
-    try {
-        // URL 파라미터에서 storeId, missionId, userId 추출
-        const { storeId, missionId, userId } = req.params;
-
-        // 서비스 계층에서 미션 시작 로직 실행
-        const missionStatus = await missionService.startMission(storeId, missionId, userId);
-
-        // 성공적으로 미션이 시작되었을 경우 201 상태 코드로 응답 반환
-        res.status(201).json(missionStatus);
-    } catch (error) {
-        // 미션이 이미 도전 중인 경우 400 상태 코드로 에러 메시지 반환
-        if (error.message === "Mission already in progress") {
-            return res.status(400).json({ message: error.message });
-        }
-        // 기타 에러가 발생한 경우 500 상태 코드로 에러 메시지 반환
-        res.status(500).json({ message: error.message });
+/**
+ * 미션 추가하기
+ * @param {{
+    "money": 10000,
+    "score": 500
+}} req 
+ * @param {{
+    "result": {
+        "id": 4,
+        "money": 10000,
+        "score": 500
     }
+}} res 
+ */
+export const handleMissionCreate = async (req, res, next) => {
+  try {
+    const mission = await createMission(
+      parseInt(req.params.storeId),
+      bodyToMission(req.body)
+    );
+
+    res.status(StatusCodes.CREATED).json({ result: mission });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * 미션 도전하기
+ * @param {{
+    "memberId": 1
+}} req
+ * @param {{
+    "result": {
+        "id": 3,
+        "status": "CHALLENGING"
+    }
+}} res
+ */
+export const handleMemberMissionCreate = async (req, res, next) => {
+  try {
+    const memberMission = await createMemberMission(
+      parseInt(req.params.missionId),
+      req.body.memberId
+    );
+
+    res.status(StatusCodes.CREATED).json({ result: memberMission });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * 내 미션 리스트 조회하기 (param 존재 시 상태로 검색)
+ * @param {*} req 
+ * @param {{
+    "result": {
+        "missions": [
+            {
+                "id": 1,
+                "money": 10000,
+                "score": 500
+            },
+            {
+                "id": 1,
+                "money": 10000,
+                "score": 500
+            }
+        ]
+    }
+}} res 
+ */
+export const handleMemberMissionListReadByStatus = async (req, res, next) => {
+  const status = req.query.status;
+  const memberId = parseInt(req.params.memberId);
+
+  const missions = status
+    ? await readMemberMissionListByStatus(memberId, status)
+    : await readMemberMissionList(memberId);
+
+  res.status(StatusCodes.OK).json({ result: missions });
 };
