@@ -1,30 +1,57 @@
-// src/repositories/member.repository.js
-import pool from '../db.config.js';
+import { prisma } from "../db.config.js";
 
-// 특정 사용자 찾기 또는 없으면 새 사용자 생성
-export const findOrCreateMember = async (memberData) => {
-    const { email, name } = memberData;
+// User 데이터 삽입
+export const addMember = async (data) => {
+  const member = await prisma.member.findFirst({
+    where: { email: data.email },
+  });
 
-    // 먼저 이메일로 사용자 찾기
-    const findQuery = `SELECT * FROM member WHERE email = ?`;
-    const [existingMember] = await pool.query(findQuery, [email]);
+  if (member) {
+    return null;
+  }
 
-    // 사용자가 존재하면 해당 사용자 반환
-    if (existingMember.length > 0) {
-        return existingMember[0];
+  const created = await prisma.member.create({ 
+    data:{
+    email: data.email || null,
+    name: data.name || null,
+    gender: data.gender || null,
+    phone_number: data.phone || null
     }
+  },);
+  return created.id;
+};
 
-    // 사용자가 없으면 새 사용자 생성
-    const insertQuery = `
-        INSERT INTO member (email, name)
-        VALUES (?, ?);
-    `;
-    const result = await pool.query(insertQuery, [email, name]);
+// 사용자 정보 얻기
+export const getMember = async (memberId) => {
+  const member = await prisma.member.findFirstOrThrow({
+    where: { id: memberId },
+  });
 
-    // 생성된 사용자의 ID를 반환
-    const memberId = result[0].insertId;
-    const selectQuery = `SELECT * FROM member WHERE id = ?`;
-    const [newMember] = await pool.query(selectQuery, [memberId]);
+  return member;
+};
 
-    return newMember[0]; // 새로 생성된 사용자 반환
+// 음식 선호 카테고리 매핑
+export const addMemberFood = async (memberId, foodId) => {
+  await prisma.MemberFood.create({
+    data: {
+      memberId: memberId,
+      foodId: foodId,
+    },
+  });
+};
+
+// 사용자 선호 카테고리 반환
+export const getMemberFoodByMemberId = async (memberId) => {
+  const preferences = await prisma.MemberFood.findMany({
+    select: {
+      id: true,
+      memberId: true,
+      foodId: true,
+      food: true,
+    },
+    where: { memberId: memberId },
+    orderBy: { foodId: "asc" },
+  });
+
+  return preferences;
 };

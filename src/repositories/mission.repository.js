@@ -1,40 +1,79 @@
-// src/repositories/mission.repository.js
-// 미션 관련 데이터베이스 접근 로직
+import { prisma } from "../db.config.js";
 
-import { prisma } from '../db.config.js'; // Prisma 클라이언트 설정 파일 로드
-
-// 사용자가 특정 미션에 도전 중인지 확인하는 함수
-export const checkMissionInProgress = async (userId, missionId) => {
-    const missionInProgress = await prisma.memberMission.findFirst({
-        where: {
-            member_id: userId,
-            mission_id: missionId,
-            status: 'ongoing',
-        },
-    });
-    return !!missionInProgress; // 이미 도전 중이라면 true 반환
+export const addMission = async (data) => {
+  const created = await prisma.mission.create({
+    data: data,
+  });
+  return created.id;
 };
 
-// 새로운 미션 도전 상태를 추가하는 함수
-export const createUserMission = async (userId, missionId, storeId) => {
-    const newMission = await prisma.memberMission.create({
-        data: {
-            member_id: userId,
-            mission_id: missionId,
-            status: 'ongoing',
-            store_id: storeId,
-            created_at: new Date(), // Prisma will automatically convert to the correct format
-            updated_at: new Date(),
-        },
-    });
+export const getMission = async (missionId) => {
+  const mission = await prisma.mission.findFirstOrThrow({
+    where: { id: missionId },
+  });
 
-    return newMission; // 새로 추가된 미션 도전 레코드 반환
+  return mission;
 };
 
-// 특정 ID의 미션을 찾는 함수
-export const findMissionById = async (missionId) => {
-    const mission = await prisma.mission.findUnique({
-        where: { id: missionId },
-    });
-    return mission || null; // 미션이 존재하면 해당 레코드 반환, 없으면 null 반환
+export const addMemberMission = async (missionId, memberId) => {
+  const created = await prisma.memberMission.create({
+    data: {
+      missionId: missionId,
+      memberId: memberId,
+    },
+  });
+
+  return created.id;
+};
+
+export const getMemberMissionById = async (memberMissionId) => {
+  const memberMission = await prisma.memberMission.findFirstOrThrow({
+    where: { id: memberMissionId },
+  });
+
+  return memberMission;
+};
+
+export const getMemberMissionByMemberIdAndMissionId = async (
+  memberId,
+  missionId
+) => {
+  const memberMission = await prisma.memberMission.findFirstOrThrow({
+    where: {
+      memberId: memberId,
+      missionId: missionId,
+    },
+  });
+
+  return memberMission;
+};
+
+export const getMemberMissionListByMemberId = async (memberId) => {
+  const memberMissionList = await prisma.MemberMission.findMany({
+    select: {
+      id: true,
+      mission: true,
+    },
+    where: { memberId: memberId },
+    orderBy: {
+      missionId: "asc",
+    },
+  });
+
+  return memberMissionList;
+};
+
+export const getMemberMissionListByStatus = async (memberId, status) => {
+  const memberMissionList = await prisma.MemberMission.findMany({
+    select: {
+      id: true,
+      mission: true,
+    },
+    where: {
+      memberId: memberId,
+      status: status,
+    },
+  });
+
+  return memberMissionList;
 };
