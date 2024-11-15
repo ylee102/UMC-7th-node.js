@@ -5,6 +5,16 @@ export const bodyToMission = (body) => {
     };
   };
   
+  export const validateMissionId = (missionId) => {
+    const parsedId = parseInt(missionId);
+    if (isNaN(parsedId)) {
+      const error = new Error("Mission ID must be a valid number");
+      error.statusCode = 400; // BAD_REQUEST
+      error.errorCode = "INVALID_MISSION_ID";
+      throw error;
+    }
+    return parsedId;
+  };
   export const responseFromMission = (mission) => {
     return {
       id: mission.id,

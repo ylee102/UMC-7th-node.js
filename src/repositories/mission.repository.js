@@ -27,6 +27,7 @@ export const addMemberMission = async (missionId, memberId) => {
 };
 
 export const getMemberMissionById = async (memberMissionId) => {
+  //findFirstorThrow 자동으로 에러
   const memberMission = await prisma.memberMission.findFirstOrThrow({
     where: { id: memberMissionId },
   });
@@ -38,7 +39,7 @@ export const getMemberMissionByMemberIdAndMissionId = async (
   memberId,
   missionId
 ) => {
-  const memberMission = await prisma.memberMission.findFirstOrThrow({
+  const memberMission = await prisma.memberMission.findFirst({
     where: {
       memberId: memberId,
       missionId: missionId,

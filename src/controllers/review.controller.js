@@ -74,7 +74,7 @@ export const handleReviewCreate = async (req, res, next) => {
       bodyToReview(req.body)
     );
 
-    res.status(StatusCodes.CREATED).json({ result: review });
+    res.status(StatusCodes.CREATED).success( review );
   } catch (error) {
     next(error);
   }

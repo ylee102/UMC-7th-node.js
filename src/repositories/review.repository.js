@@ -17,6 +17,11 @@ export const getStoreReviewList = async (storeId, cursor) => {
 };
 
 export const addReview = async (data) => {
+
+  const store = await prisma.store.findFirstOrThrow({
+    where: {id: data['storeId']}
+  });
+
   const created = await prisma.Review.create({
     data: data,
   });
