@@ -49,7 +49,7 @@ export const handleStoreMissionRead = async (req, res, next) => {
   try {
     const missions = await readMissionsByStoreId(parseInt(req.params.storeId));
 
-    res.status(StatusCodes.OK).json(missions);
+    res.status(StatusCodes.OK).success(missions);
   } catch (error) {
     next(error);
   }
