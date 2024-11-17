@@ -3,7 +3,6 @@
 //가게 operation controller 
 //컨트롤러는 들어오는 http 요청을 처리하고 응답을 (client request/reponse) 보냄. 
 //index.js route로 부터 데이터 받은뒤 서비스로 보냄.  
-
 import { storeService } from '../services/store.service.js';
 import {listStoreReviews} from '../services/store.service.js';
 // 가게 추가 기능을 처리하는 컨트롤러 함수
@@ -33,5 +32,20 @@ export const handleListStoreReviews = async(req, res, next) => {
         parseInt(req.params.storeId),
         typeof req.query.cursor === "string"?parseInt(req.query.cursor) :0 
     );
-    res.status(StatusCodes.OK).success(reviews);
+    res.status(StatusCodes.OK).json({result: reviews});
+}
+
+
+
+//가게에 미션추가하기
+export const handleAddStoreMission = async(req, res) => {
+    const {storeId} = req.params.storeId;
+    const {title, description} = req.body ;
+    //storeId 에 해당하는 가게에 미션을 추가. 
+    //가게 있는지 확인. 
+    const store = await 
+
+    //없으면 가게에 미션 추가 실행 
+
+    res.status(StatusCodes.OK).json({ result: result });
 }
