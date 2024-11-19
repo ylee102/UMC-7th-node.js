@@ -30,6 +30,10 @@ export const getRegionIdByRegion = async (regionName) => {
 };
 
 export const getMissionsByStoreId = async (storeId) => {
+  const noStore = await prisma.mission.findFirstOrThrow({
+    where: {storeId : storeId}
+  });
+
   const missions = await prisma.mission.findMany({
     where: { storeId: storeId },
   });

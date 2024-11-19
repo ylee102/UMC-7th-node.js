@@ -18,7 +18,7 @@ export const handleStoreCreate = async (req, res, next) => {
   try {
     const store = await createStore(bodyToStore(req.body, req.query.region));
 
-    res.status(StatusCodes.CREATED).json({ result: store });
+    res.status(StatusCodes.CREATED).success(store);
   } catch (error) {
     next(error);
   }
@@ -49,7 +49,7 @@ export const handleStoreMissionRead = async (req, res, next) => {
   try {
     const missions = await readMissionsByStoreId(parseInt(req.params.storeId));
 
-    res.status(StatusCodes.OK).json(missions);
+    res.status(StatusCodes.OK).success(missions);
   } catch (error) {
     next(error);
   }
