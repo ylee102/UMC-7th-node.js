@@ -77,3 +77,23 @@ export const getMemberMissionListByStatus = async (memberId, status) => {
 
   return memberMissionList;
 };
+
+export const changeMissionToComplete = async (missionId) => {
+  //미션id 있는지 확인
+  const missioncheck = await prisma.MemberMission.findFirstOrThrow({
+    where: {
+      missionId: missionId
+    }
+  });
+
+  const mission = await prisma.MemberMission.update({
+    where: {id: missionId},
+    data: {status : 'Complete'}, //상태를 Complete로 바꾸기. 
+    select: { id: true, status: true }, // Optional: Return only specific fields
+  })
+  return {
+    message: "mission status changed to complete",
+    mission
+  }
+  
+}
