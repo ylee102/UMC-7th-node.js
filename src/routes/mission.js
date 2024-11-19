@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  handleMissionCreate,
   handleMemberMissionCreate,
   handleMemberMissionListReadByStatus,
   handleMissionCompletion
@@ -7,6 +8,7 @@ import {
 
 const router = express.Router();
 
+router.post("/store/:storeId", handleMissionCreate);
 router.post("/:missionId", handleMemberMissionCreate);
 router.get("/mine/:memberId", handleMemberMissionListReadByStatus);
 

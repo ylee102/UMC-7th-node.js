@@ -100,8 +100,7 @@ export const handleMemberSignUp = async (req, res, next) => {
 
   try {
     const member = await memberSignUp(bodyToMember(req.body));
-
-    res.status(StatusCodes.CREATED).json({ result: member });
+    res.status(StatusCodes.CREATED).success(member);
   } catch (error) {
     next(error);
   }

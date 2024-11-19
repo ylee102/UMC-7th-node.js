@@ -1,4 +1,5 @@
 import { responseFromMember } from "../dtos/member.dto.js";
+import { DuplicateUserEmailError } from "../error.js";
 import {
   addMember,
   getMember,
@@ -17,7 +18,7 @@ export const memberSignUp = async (data) => {
   });
 
   if (joinMemberId === null) {
-    throw new Error("이미 존재하는 이메일입니다.");
+    throw new DuplicateUserEmailError("이미존재하는 이메일입니다", data);
   }
 
   for (const preference of data.preferences) {
