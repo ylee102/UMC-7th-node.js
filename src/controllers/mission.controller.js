@@ -5,6 +5,7 @@ import {
   createMission,
   readMemberMissionListByStatus,
   readMemberMissionList,
+  changeMissionStatus
 } from "../services/mission.service.js";
 
 /**
@@ -113,3 +114,21 @@ export const handleMemberMissionListReadByStatus = async (req, res, next) => {
         next(error);
     }
 };
+
+export const handleMissionCompletion = async(req, res, next) => {
+  const missionId = req.params.missionId
+  // missionId 유효성 검사
+  if (isNaN(missionId) || parseInt(missionId,10)<0) {    
+    return res.status(400).json({
+      success: false,
+      message: "Invalid missionId. It must be a positive number.",
+    });
+}
+  
+try {
+  const mission = await changeMissionStatus(parseInt(missionId,10));
+  res.status(200).json({success : true, mission});
+} catch (error) {
+  next(error)
+  }
+}

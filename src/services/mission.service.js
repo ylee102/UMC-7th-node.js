@@ -11,6 +11,7 @@ import {
     getMemberMissionListByMemberId,
     getMemberMissionListByStatus,
     getMemberMissionByMemberIdAndMissionId,
+    changeMissionToComplete
   } from "../repositories/mission.repository.js";
   
   export const createMission = async (storeId, data) => {
@@ -53,4 +54,12 @@ import {
   
     return responseFromMemberMissionList(memberMissionList);
   };
+
+export const changeMissionStatus = async (missionId) => {
+  const result = await changeMissionToComplete (missionId);
+  
+  return result
+  
+}
+
   
