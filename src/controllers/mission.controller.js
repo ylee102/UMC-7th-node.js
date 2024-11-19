@@ -119,7 +119,7 @@ export const handleMissionCompletion = async(req, res, next) => {
   const missionId = req.params.missionId
   // missionId 유효성 검사
   if (isNaN(missionId) || parseInt(missionId,10)<0) {    
-    return res.status(400).json({
+    return res.status(400).success({
       success: false,
       message: "Invalid missionId. It must be a positive number.",
     });
@@ -127,7 +127,7 @@ export const handleMissionCompletion = async(req, res, next) => {
   
 try {
   const mission = await changeMissionStatus(parseInt(missionId,10));
-  res.status(200).json({success : true, mission});
+  res.status(200).success({success : true, mission});
 } catch (error) {
   next(error)
   }
