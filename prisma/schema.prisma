@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String   @db.VarChar(512)
+  expiresAt DateTime @map("expires_at")
+
+  @@map("session")
+}
+
+model Member {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique(map: "email") @db.VarChar(255)
+  name          String   @db.VarChar(15)
+  gender        String   @db.VarChar(15)
+  phone_number  String   @db.VarChar(15) 
+  
+  MemberFoods MemberFood[]
+  MemberMissions MemberMission[]
+  Reviews Review[]
+
+  @@map("member")
+}
+
+model Food {
+  id            Int @id @default(autoincrement())
+  name          String @db.VarChar(10)
+
+  MemberFoods MemberFood[]
+
+  @@map("food")
+}
+
+model MemberFood {
+  id            Int     @id @default(autoincrement())
+  member        Member  @relation(fields: [memberId], references: [id])
+  memberId      Int     @map("member_id")
+  food          Food    @relation(fields: [foodId], references: [id])
+  foodId        Int     @map("food_id")
+
+  @@index([foodId], map: "food_id")
+  @@index([memberId], map: "member_id")
+  @@map("member_food")
+}
+
+model Store {
+  id            Int     @id @default(autoincrement())
+  address       String  @db.VarChar(100)
+  name          String  @db.VarChar(30)
+  score         Float   @db.Float @default(0.0)
+  region        Region  @relation(fields: [regionId], references: [id])
+  regionId      Int     @map("region_id")
+
+  Reviews Review[]
+  Missions Mission[]
+
+  @@index([regionId], map: "region_id")
+  @@map("store")
+}
+
+model Region {
+  id            Int     @id @default(autoincrement())
+  name          String  @db.VarChar(255) @unique
+
+  Stores Store[]
+
+  @@map("region")
+}
+
+model Review {
+  id            Int     @id @default(autoincrement())
+  content       String  @db.VarChar(255)
+  star          Float   @db.Float
+  member        Member  @relation(fields: [memberId], references: [id])
+  memberId      Int     @map("member_id")
+  store         Store   @relation(fields: [storeId], references: [id])
+  storeId       Int     @map("store_id")
+ 
+  @@index([memberId], map: "member_id")
+  @@index([storeId], map: "store_id")
+  @@map("review")
+}
+
+model Mission {
+  id            Int     @id @default(autoincrement())
+  money         Int     @db.Int
+  score         Int     @db.Int
+  store         Store   @relation(fields: [storeId], references: [id])
+  storeId       Int     @map("store_id")
+
+  MemberMissions MemberMission[]
+
+  @@index([storeId], map: "store_id")
+  @@map("mission")
+}
+
+model MemberMission {
+  id            Int     @id @default(autoincrement())
+  status        String  @db.VarChar(255) @default("CHALLENGING")
+  member        Member  @relation(fields: [memberId], references: [id])
+  memberId      Int     @map("member_id")
+  mission       Mission @relation(fields: [missionId], references: [id])
+  missionId     Int     @map("mission_id")
+
+  @@index([memberId], map: "member_id")
+  @@index([missionId], map: "mission_id")
+  @@map("member_mission")
+}
