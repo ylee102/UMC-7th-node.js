@@ -11,7 +11,7 @@ import {
 
 const router = express.Router();
 
-router.post("", handleStoreCreate);
+router.post("/", handleStoreCreate);
 router.get("/:storeId/reviews", handleStoreReviewListRead);
 router.post("/:storeId/reviews", handleReviewCreate);
 router.post("/:storeId/missions", handleMissionCreate);
